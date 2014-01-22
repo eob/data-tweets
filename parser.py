@@ -30,14 +30,16 @@ def parse_tweet_text(text):
   flush(key, val)
   return ret
 
-t1 = "This is a #test of it."
-t2 = "#one #two #three"
-t3 = "#x 12 #y 34 that's all folks"
-t4 = "#z #x 12 #y one hundred"
 
-t = [t1, t2, t3, t4]
-for tt in t:
-  ret = parse_tweet_text(tt)
-  print tt
-  print ret
-  print ""
+def test_parse_tweet_text():
+  t1 = "This is a #test of it."
+  t2 = "#one #two #three"
+  t3 = "#x 12 #y 34 that's all folks"
+  t4 = "#z #x 12 #y one hundred"
+  
+  t = [t1, t2, t3, t4]
+  for tt in t:
+    ret = parse_tweet_text(tt)
+    print tt
+    print ret
+    print ""
