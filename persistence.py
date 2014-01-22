@@ -1,16 +1,16 @@
 import json
 
 class SimpleFilePersistence:
-  def __init__(config):
+  def __init__(self, config):
     self.config = config
     self.fname = config.get('Logging', 'filename', 0)
 
-  def open():
+  def open(self):
     self.fout = open(self.fname, 'w')
 
-  def close():
+  def close(self):
     self.fout.close()
 
-  def record(tweetData):
+  def record(self, tweetData):
     s = json.dumps(tweetData)
     self.fout.write(s)
