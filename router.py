@@ -1,4 +1,4 @@
-from logger import Logger
+from persistence import SimpleFilePersistence as Persistence
 from parser import parse_tweet
 
 class Router:
@@ -6,13 +6,13 @@ class Router:
     self.config = config
 
   def start():
-    self.logger = Logger(self.config)
-    self.logger.open()
+    self.persistence= Persistence(self.config)
+    self.persistence.open()
   
   def stop():
-    self.logger.close()
+    self.persistence.close()
 
   def handleNewTweet(tweet):
     data = parse_tweet(tweet)
-    logger.log(data)
+    persistence.record(data)
 
