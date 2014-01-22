@@ -1,10 +1,15 @@
-def parse_tweet_text(text):
+def parse_tweet_text(text, intoDict = None):
   """Returns a dict.
 
   Every hash tag is a dictionary key, all that follows, up until the next hash tag, is
   the the value.
   """
-  ret = {}
+
+  if intoDict is None:
+    ret = {}
+  else:
+    ret = intoDict
+
   parts = text.split(" ")
 
   key = None
@@ -28,6 +33,33 @@ def parse_tweet_text(text):
       if key is not None:
         val.append(part)
   flush(key, val)
+  return ret
+
+
+def parse_tweet(status):
+  """Parses a tweet object and returns a dict.
+
+  Args:
+    - A status object, as defined by the python-twitter library.
+
+  Returns:
+    - A dict with the following properties:
+      - user
+      - user-hash
+      - lat, lng
+      - datetime
+      - parsed tweet text
+  """
+  ret['user'] = status.user.GetScreenName()
+  ret['coordinates'] = status.GetCoordinates()
+  ret['created_at'] = status.GetCreatedAt()
+  ret['id'] = status.GetId()
+
+  # Let's just get rid of line breaks in tweets. It makes cheap file serialization easier.
+  text = status.GetText().replace('\n', ' ').replace('\r', '')
+
+  ret['text'] = text
+  parse_tweet_text(text, ret)
   return ret
 
 
