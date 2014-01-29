@@ -16,7 +16,7 @@ class Listener:
 
   def loop(self):
     self.fetch_direct_messages()
-    nextTime = threading.Timer(60, self.loop)
+    nextTime = threading.Timer(self.config['dm_poll'], self.loop)
     # This keeps the Ctrl-C signal going to the main() routine
     # But if the thread is executing while Ctrl-C is pressed there
     # may be strange error messages upon exit as a result.

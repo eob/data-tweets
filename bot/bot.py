@@ -32,10 +32,10 @@ class Bot:
 
   def observe_tweet(self, tweet):
     if tweet['method'] not in self.last_ids:
-      self.last_ids['method'] = tweet['id']
+      self.last_ids[tweet['method']] = tweet['id']
     else:
-      if tweet['id'] > self.last_ids['method']:
-        self.last_ids['method'] = tweet['id']
+      if tweet['id'] > self.last_ids[tweet['method']]:
+        self.last_ids[tweet['method']] = tweet['id']
 
   def handle_new_tweet(self, tweet, method):
     """This gets called by the listener when there is a new tweet to record."""
@@ -46,6 +46,7 @@ class Bot:
     data['method'] = method
     print data
     if self.is_novel(data):
+      print "It's a novel tweet"
       self.observe_tweet(data)
       self.persistence.record(data)
 

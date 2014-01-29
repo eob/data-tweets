@@ -1,0 +1,11 @@
+tr.keys th, tr.vals td {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+tr.keys th {
+  border-bottom: 1px solid #ccc;
+}
+
+tr.vals td {
+}

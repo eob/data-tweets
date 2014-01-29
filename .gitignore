@@ -1,3 +1,3 @@
-settings.json
 *.pyc
-bot/data
+data/
+conf/twitter-daemon-conf.json

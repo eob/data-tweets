@@ -1,0 +1,52 @@
+{% for bot in bots %}
+<h2>{{bot.name}}</h2>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Time</th>
+      <th>Experiment</th>
+      <th>User</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for tweet in bot.tweets %}
+    <tr>
+      <td rowspan="3">{{tweet.id}}</td>
+      <td>{{tweet.created_at}}</td>
+      <td>{{tweet.parsed.experiment}}</td>
+      <td>{{tweet.sender_screen_name}}</td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        {% for tag in tweet.parsed.tags %}
+        <span class="label label-info">{{tag}}</span>
+        {% endfor %}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <table>
+          <thead>
+            <tr class="keys">
+              {% for k in tweet.kk %}
+              <th>{{k}}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="vals">
+              {% for v in tweet.vals %}
+              <td>{{v}}</td>
+              {% endfor %}
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+
+{% endfor %}

@@ -28,7 +28,7 @@ class SimpleFilePersistence:
       f.close()
 
   def open(self):
-    self.fout = open(self.fname, 'w')
+    self.fout = open(self.fname, 'a')
 
   def close(self):
     self.fout.close()
