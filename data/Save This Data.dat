@@ -1,0 +1,1 @@
+{"created_at": "Wed Jan 29 14:58:24 +0000 2014", "text": "#tag1 p:v p2:v2", "sender_screen_name": "edwardbenson", "method": "direct_message", "id": 428542649411575808, "parsed": {"experiment": "tag1", "properties": {"p2": "v2", "p": "v"}, "tags": ["tag1"]}}

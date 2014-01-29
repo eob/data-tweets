@@ -1,8 +1,52 @@
 def parse_tweet_text(text, intoDict = None):
   """Returns a dict.
 
-  Every hash tag is a dictionary key, all that follows, up until the next hash tag, is
-  the the value.
+  @thing #expname #tag1 k:v k:v #tag2
+  """
+  data = {
+    'tags': [],
+    'experiment': '',
+    'properties': {}
+  }
+
+  parts = text.split(" ")
+
+  key = None
+  val = []
+
+  def flush(key, val):
+    if key is not None:
+      if len(val) == 0:
+        ret[key] = True
+      else:
+        ret[key] = " ".join(val)
+      key = None
+      val = []
+
+  firstPart = True
+  for part in parts:
+    if part[0] == '#':
+      # It's a tag
+      data['tags'].append(part[1:])
+      if firstPart:
+        data['experiment'] = part[1:]
+    elif ':' in part:
+      kv = part.split(':')
+      k = kv[0]
+      v = ''.join(kv[1:])
+      data['properties'][k] = v
+    firstPart = False
+
+  if intoDict is None:
+    intoDict = {}
+  intoDict['parsed'] = data
+  return intoDict
+
+
+def parse_tweet_text_old(text, intoDict = None):
+  """Returns a dict.
+
+  @thing #key value #key value #tag #tag
   """
 
   if intoDict is None:
@@ -35,6 +79,31 @@ def parse_tweet_text(text, intoDict = None):
   flush(key, val)
   return ret
 
+def parse_dm(status):
+  """Parses a DM and returns a dict.
+
+  Interesting wrinkle: DMs aren't geocoded.
+
+  Args:
+    - A status object, as defined by the python-twitter library.
+
+  Returns:
+    - A dict with the following properties:
+      - user
+      - datetime
+      - parsed tweet text
+  """
+  ret = {}
+  ret['sender_screen_name'] = status.sender_screen_name
+  ret['created_at'] = status.created_at
+  ret['id'] = status.id
+
+  # Let's just get rid of line breaks in tweets. It makes cheap file serialization easier.
+  text = status.text.replace('\n', ' ').replace('\r', '')
+
+  ret['text'] = text
+  parse_tweet_text(text, ret)
+  return ret
 
 def parse_tweet(status):
   """Parses a tweet object and returns a dict.
@@ -45,11 +114,11 @@ def parse_tweet(status):
   Returns:
     - A dict with the following properties:
       - user
-      - user-hash
       - lat, lng
       - datetime
       - parsed tweet text
   """
+  ret = {}
   ret['user'] = status.user.GetScreenName()
   ret['coordinates'] = status.GetCoordinates()
   ret['created_at'] = status.GetCreatedAt()

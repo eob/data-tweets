@@ -1,5 +1,5 @@
 from persistence import SimpleFilePersistence as Persistence
-from parser import parse_tweet
+from parser import parse_tweet, parse_dm
 from listener import Listener
 import twitter as twitter_library
 
@@ -8,7 +8,7 @@ class Bot:
     self.my_config = my_config
     self.global_config = global_config
     self.last_ids = {}
-    initialize_twitter()
+    self.initialize_twitter()
 
   def start(self):
     print "Starting Bot: %s..\n Press Ctrl-C to exit" % self.my_config['name']
@@ -37,18 +37,23 @@ class Bot:
       if tweet['id'] > self.last_ids['method']:
         self.last_ids['method'] = tweet['id']
 
-  def handle_new_tweet(self, tweet):
+  def handle_new_tweet(self, tweet, method):
     """This gets called by the listener when there is a new tweet to record."""
-    data = parse_tweet(tweet)
+    if method == 'direct_message':
+      data = parse_dm(tweet)
+    else:
+      data = parse_tweet(tweet)
+    data['method'] = method
+    print data
     if self.is_novel(data):
       self.observe_tweet(data)
       self.persistence.record(data)
 
   def initialize_twitter(self):
     self.twitter = twitter_library.Api(
-        consumer_key=self.my_config['access_token'],
-        consumer_secret=self.my_config['token_secret'],
-        access_token_key=self.global_config['global_token'],
-        access_token_secret=self.global_config['global_secret'],
+        access_token_key=self.my_config['access_token'],
+        access_token_secret=self.my_config['token_secret'],
+        consumer_key=self.global_config['global_token'],
+        consumer_secret=self.global_config['global_secret'],
         cache=None)
 

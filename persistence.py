@@ -1,5 +1,6 @@
 import json
 import tempfile, shutil, os
+import os.path
 import uuid
 
 class SimpleFilePersistence:
@@ -8,7 +9,7 @@ class SimpleFilePersistence:
     self.global_config = global_config
 
     # Ensure output directory
-    d = os.path.dirname(global_config['persistence']['output_dir'])
+    d = global_config['persistence']['output_dir']
     if not os.path.exists(d):
       print "Creating directory " + global_config['persistence']['output_dir']
       os.makedirs(d)
@@ -16,14 +17,15 @@ class SimpleFilePersistence:
         my_config['name'] + '.dat')
 
   def tweets(self):
-    temp_dir = tempfile.gettempdir()
-    temp_path = os.path.join(temp_dir, str(uuid.uuid4()))
-    shutil.copy2(self.fname, temp_path)
-    f = open(temp_path, 'r')
-    for line in f:
-      row = json.parse(line)
-      yield row
-    f.close()
+    if os.path.isfile(self.fname):
+      temp_dir = tempfile.gettempdir()
+      temp_path = os.path.join(temp_dir, str(uuid.uuid4()))
+      shutil.copy2(self.fname, temp_path)
+      f = open(temp_path, 'r')
+      for line in f:
+        row = json.loads(line)
+        yield row
+      f.close()
 
   def open(self):
     self.fout = open(self.fname, 'w')
@@ -33,4 +35,4 @@ class SimpleFilePersistence:
 
   def record(self, tweetData):
     s = json.dumps(tweetData)
-    self.fout.write(s)
+    self.fout.write(s + "\n")
