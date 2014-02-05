@@ -3,3 +3,4 @@ data/
 conf/twitter-daemon-conf.json
 node_modules
 npm-debug.log
+server/config/secrets.js
