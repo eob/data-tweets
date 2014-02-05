@@ -34,7 +34,8 @@ module.exports = {
   twitter: {
     consumerKey: 't4VgnzhmEJAPz2KJzbUdzA',
     consumerSecret: 'TilIUYZRqxPrYIBDxVsYOUQzSWcGmzXyqGV0Fht634',
-    callbackURL: '/auth/twitter/callback',
+    callbackURL: 'http://box.csail.mit.edu/auth/twitter/callback',
+    userAuthorizationURL: 'https://api.twitter.com/oauth/authorize',
     passReqToCallback: true
   },
 

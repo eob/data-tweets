@@ -10,7 +10,4 @@ server {
     expires 30d; 
     access_log off;
   }
-  location ~* ^.+\.(jpg|md|mkd|json|jpeg|gif|png|ico|css|cts|zip|tgz|gz|rar|bz2|pdf|txt|tar|wav|bmp|rtf|js|flv|swf|html|htm)$ {
-    root   /sites/experiment-in-a-box/server/public;
-  }
 }

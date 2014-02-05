@@ -123,6 +123,19 @@ passport.use(new GitHubStrategy(secrets.github, function(req, accessToken, refre
  * Sign in with Twitter.
  */
 
+
+var initTwitterOauth = function() {
+  oa = new OAuth(
+    "https://twitter.com/oauth/request_token"
+    ,"https://twitter.com/oauth/access_token"
+    , secrets.twitter.consumerKey
+    , secrets.twitter.consumerSecret
+    , "1.0A"
+    , "http://" + domain + ":" + port + "/twitter/authn/callback"
+    , "HMAC-SHA1"
+  );
+};
+
 passport.use(new TwitterStrategy(secrets.twitter, function(req, accessToken, tokenSecret, profile, done) {
   if (req.user) {
     User.findOne({ twitter: profile.id }, function(err, existingUser) {
