@@ -32,15 +32,15 @@ module.exports = {
   },
 
   twitter: {
-    consumerKey: 'Your Consumer Key',
-    consumerSecret: 'Your Consumer Secret',
+    consumerKey: 't4VgnzhmEJAPz2KJzbUdzA',
+    consumerSecret: 'TilIUYZRqxPrYIBDxVsYOUQzSWcGmzXyqGV0Fht634',
     callbackURL: '/auth/twitter/callback',
     passReqToCallback: true
   },
 
   google: {
-    clientID: 'Your Client ID',
-    clientSecret: 'Your Client Secret',
+    clientID: '611397698570-34q1q8a0gc17e042vh0k4t3u7024g392.apps.googleusercontent.com',
+    clientSecret: 's1qxIko-sWn4klO_iPKuUaK1',
     callbackURL: '/auth/google/callback',
     passReqToCallback: true
   },

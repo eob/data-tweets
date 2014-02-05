@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  .page-header
+    h3=experiment.name
+
+  table.table.table-bordered
+    thead
+      tr
+        th ID
+        th Time
+        th Experiment
+        th User
+    tbody
+      each tweet in tweets
+        tr
+          td(rowspan='3')
+          td
+          td=tweet.received
+          td=tweet.participantHash
+        tr
+          td(colspan='3')
+            each tag in tweet.parsedTags
+              span.label.label-info=tag
+        tr
+          td(colspan='3')
+            table
+              thead
+                tr.keys
+                  each k,v in tweet.parsedData
+                    th=k
+              tbody
+                tr.vals
+                  each k,v in tweet.parsedData
+                    td=v

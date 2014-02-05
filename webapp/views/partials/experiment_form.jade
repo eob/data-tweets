@@ -1,0 +1,22 @@
+form.form-horizontal(role='form', method='POST', action='/experiments/create')
+  .form-group
+    label(class='col-sm-2 control-label', for='name') Name
+    .col-sm-6
+      input.form-control(type='name', name='name', id='name', autofocus=true)
+  .form-group
+    label(class='col-sm-2 control-label', for='name') Hash Tag
+    .col-sm-2
+      input.form-control(type='name', name='hashtag', id='hashtag')
+
+  .form-group
+    label(class='col-sm-2 control-label', for='exampletweet') Example Tweet
+    .col-sm-8
+      input.form-control(type='text', name='exampletweet', id='exampletweet')
+  .form-group
+      input.form-control(type='hidden', name='_csrf', value=token) 
+  .form-group
+    .col-sm-offset-2.col-sm-8
+      button.btn.btn-default(type='submit')
+        i.fa.fa-mail-forward
+        | Create
+

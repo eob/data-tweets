@@ -1,6 +1,10 @@
 var mongoose = require('mongoose');
+var secrets = require('../config/secrets');
 var bcrypt = require('bcrypt-nodejs');
 var crypto = require('crypto');
+var Twit = require('twit');
+var Tweet = require('./Tweet');
+var _ = require('underscore');
 
 var userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
@@ -11,7 +15,11 @@ var userSchema = new mongoose.Schema({
   google: { type: String, unique: true, sparse: true },
   github: { type: String, unique: true, sparse: true },
   tokens: Array,
-
+  experiments: [{
+    title: String,
+    hashtag: String,
+    exampletweet: String
+  }],
   profile: {
     name: { type: String, default: '' },
     gender: { type: String, default: '' },
@@ -59,6 +67,32 @@ userSchema.methods.gravatar = function(size, defaults) {
   var md5 = crypto.createHash('md5');
   md5.update(this.email);
   return 'https://gravatar.com/avatar/' + md5.digest('hex').toString() + '?s=' + size + '&d=' + defaults;
+};
+
+userSchema.methods.directMessages = function(cb) {
+  var token = _.findWhere(this.tokens, { kind: 'twitter' });
+  var T = new Twit({
+    consumer_key: secrets.twitter.consumerKey,
+    consumer_secret: secrets.twitter.consumerSecret,
+    access_token: token.accessToken,
+    access_token_secret: token.tokenSecret
+  });
+  T.get('direct_messages', function (err, reply) {
+    if (err) {
+      return cb(err);
+    }
+    console.log(reply);
+    cb(null, reply);
+  });
+};
+
+userSchema.methods.pullTweets = function() {
+  this.directMessages(function(err, messages) {
+    for (var i = 0; i < messages.length; i++) {
+      var tweet = messages[i];
+      Tweet.maybeRecord(tweet, 'dm', this);
+    }
+  });
 };
 
 module.exports = mongoose.model('User', userSchema);

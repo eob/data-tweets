@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  .page-header
+    h3 My Experiments
+   
+  if experiments
+    each experiment in experiments
+      li
+        a(href=experiment.link)=experiment.name
+  else
+    p You haven't created an experiment yet!
+  
+  h3(style="margin-top: 40px") Create New Experiment
+
+  include partials/experiment_form
