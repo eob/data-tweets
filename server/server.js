@@ -15,6 +15,7 @@ var expressValidator = require('express-validator');
  */
 
 var homeController = require('./controllers/home');
+var syncController = require('./controllers/sync');
 var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
 var experimentsController = require('./controllers/experiments');
@@ -103,8 +104,12 @@ app.get('/logout', userController.logout);
 app.get('/signup', userController.getSignup);
 app.post('/signup', userController.postSignup);
 
-app.get('/experiments', experimentsController.getIndex);
-app.post('/experiments/create', experimentsController.postCreate);
+app.get('/experiments', passportConf.isAuthenticated, experimentsController.getIndex);
+app.post('/experiments/create', passportConf.isAuthenticated, experimentsController.postCreate);
+app.get('/experiment/:experiment', passportConf.isAuthenticated, experimentsController.getExperiment);
+
+app.get('/sync', passportConf.isAuthenticated, syncController.getIndex);
+app.post('/sync', passportConf.isAuthenticated, syncController.postIndex);
 
 app.get('/account', passportConf.isAuthenticated, userController.getAccount);
 app.post('/account/profile', passportConf.isAuthenticated, userController.postUpdateProfile);

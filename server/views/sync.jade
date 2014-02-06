@@ -1,0 +1,38 @@
+extends layout
+
+block content
+  .page-header
+    h3 Sync with Twitter
+
+    p Note: We could schedule regular syncs or add in the streaming API.
+
+  div.col-sm-6
+    table.table
+      tbody 
+        tr
+          th.pull-right Twitter account
+          td=name
+
+        tr
+          th.pull-right Last Sync
+          td
+            table.table.table-condensed
+              tr
+                th Time
+                td=lastSyncTime
+              tr
+                th Result
+                td=lastSyncStatus
+              tr
+                th New Tweets
+                td=lastSyncHaul
+        tr
+          th.pull-right Current Status
+          td=syncStatus
+
+    if offerSync
+      form(method='post', action='/sync', style='margin-top: 15px;')
+        input(type="hidden", name="_csrf", value=token)
+        button(type='submit' class='btn btn-success') Sync with Twitter Now
+ 
+     

@@ -3,13 +3,20 @@ extends layout
 block content
   .page-header
     h3 My Experiments
-   
+
   if experiments
-    each experiment in experiments
-      li
-        a(href=experiment.link)=experiment.name
+    ul(style='margin-top: 10px')
+      each experiment in experiments
+        li
+          a(href=experiment.link)=experiment.name
   else
-    p You haven't created an experiment yet!
+    p You haven't created a named experiment yet!
+
+  p You can also view 
+    a(href='/experiment/__default') all tweets that did not specify an experiment
+    span  or  
+    a(href='/experiment/__all') all tweets for this bot
+
   
   h3(style="margin-top: 40px") Create New Experiment
 

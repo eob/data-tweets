@@ -5,6 +5,7 @@ var crypto = require('crypto');
 var Twit = require('twit');
 var Tweet = require('./Tweet');
 var _ = require('underscore');
+var Q = require('q');
 
 var userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
@@ -14,12 +15,11 @@ var userSchema = new mongoose.Schema({
   twitter: { type: String, unique: true, sparse: true },
   google: { type: String, unique: true, sparse: true },
   github: { type: String, unique: true, sparse: true },
+  syncStatus: { type: String, default: "Not Syncing" },
+  lastSyncStatus: { type: String, default: "" },
+  lastSyncHaul: { type: Number, default: 0},
+  lastSyncTime: { type: Date, default: null},
   tokens: Array,
-  experiments: [{
-    title: String,
-    hashtag: String,
-    exampletweet: String
-  }],
   profile: {
     name: { type: String, default: '' },
     gender: { type: String, default: '' },
@@ -81,18 +81,42 @@ userSchema.methods.directMessages = function(cb) {
     if (err) {
       return cb(err);
     }
-    console.log(reply);
     cb(null, reply);
   });
 };
 
 userSchema.methods.pullTweets = function() {
-  this.directMessages(function(err, messages) {
-    for (var i = 0; i < messages.length; i++) {
-      var tweet = messages[i];
-      Tweet.maybeRecord(tweet, 'dm', this);
-    }
-  });
+  var self = this;
+  if (this.syncStatus != "Syncing") {
+    this.syncStatus = "Syncing";
+    this.lastSyncTime = Date.now;
+    this.save();
+  
+    this.directMessages(function(err, messages) {
+      var promises = _.map(messages, function(m) {
+        return Tweet.maybeRecord(m, 'dm', self);
+      });
+      Q.all(promises).then(
+        function(results) {
+          var count = 0;
+          for (var i = 0; i < results.length; i++) {
+            if (results[i]) {
+              count += 1;
+            }
+          }
+          self.lastSyncHaul = count;
+          self.syncStatus = "Not Syncing";
+          self.lastSyncStatus = "Success";
+          self.save();
+        },
+        function(err) {
+          self.syncStatus = "Not Syncing";
+          self.lastSyncStatus = "Error";
+          self.save();
+        }
+      );
+    });
+  }
 };
 
 module.exports = mongoose.model('User', userSchema);

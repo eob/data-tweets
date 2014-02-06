@@ -9,3 +9,4 @@ var experimentSchema = new mongoose.Schema({
   hashtag: { type: String }
 });
 
+module.exports = mongoose.model('Experiment', experimentSchema);

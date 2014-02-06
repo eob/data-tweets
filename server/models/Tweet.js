@@ -1,16 +1,19 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 var crypto = require('crypto');
+var Q = require('q');
 
 var tweetSchema = new mongoose.Schema({
   twitterData: { type: mongoose.Schema.Types.Mixed },
   experiment: { type: mongoose.Schema.Types.ObjectId },
+  user: { type: mongoose.Schema.Types.ObjectId },
   botHandle: { type: String },
+  twitterId: { type: String },
   method: { type: String },
   received: { type: Date, default: Date.now },
-  experimentName: { type: String },
+  experimentName: { type: String, default: '' },
   participantHash: { type: String },
-  parsedData: { type: String },
+  parsedData: { type: mongoose.Schema.Types.Mixed },
   parsedTags: [{ type: String }]
 });
 
@@ -33,7 +36,6 @@ tweetSchema.pre('save', function(next) {
 });
 
 tweetSchema.methods.parseFrom = function(twitterData, method) {
-  this.twitterData = twitterData;
   this.botHandle = twitterData.recipient.screen_name;
   this.method = method;
   this.twitterId = twitterData.id_str;
@@ -41,7 +43,8 @@ tweetSchema.methods.parseFrom = function(twitterData, method) {
     .replace(/\n/g, ' ')
     .replace(/\r/g, ' ')
     .replace(/^\s+|\s+$/g, ''); // Strip
-  this.experimentHashtag = this.experimentHashtagFromTweet(text);
+  this.twitterData = twitterData;
+  this.experimentName = this.experimentHashtagFromTweet(text);
   this.parsedData = this.keyValuesFromTweet(text);
   this.parsedTags = this.tagsFromTweet(text);
 };
@@ -84,7 +87,7 @@ tweetSchema.methods.tagsFromTweet = function(text) {
 };
 
 tweetSchema.methods.keyValuesFromTweet = function(text) {
-  var words = tweet.split(' ');
+  var words = text.split(' ');
   var ret = {};
   for (var i = 0; i < words.length; i++) {
     var word = words[i];
@@ -100,11 +103,37 @@ tweetSchema.methods.keyValuesFromTweet = function(text) {
   return ret;
 };
 
+var Tweet = mongoose.model('Tweet', tweetSchema);
+
 var maybeRecord = function(tweet, method, user) {
-  // TODO
+  var deferred = Q.defer();
+
+  // See if mongo already has one.
+  Tweet.findOne({twitterId: tweet.id_str}, function(err, existingTweet) {
+    if (err) { 
+      deferred.reject(err);
+    }
+    if (existingTweet != null) {
+      deferred.resolve(false);
+    } else {
+      // None existed.
+      var t = new Tweet();
+      t.twitterData = tweet;
+      t.parseFrom(tweet, method);
+      t.user = user.id;
+      t.save(function(e, tw) {
+        if (e) {
+          deferred.reject(e);
+        } else {
+          deferred.resolve(true);
+        }
+      });
+    }
+  });
+  return deferred.promise;
 };
 
 module.exports = {
-  Tweet: mongoose.model('Tweet', tweetSchema),
+  Tweet: Tweet,
   maybeRecord: maybeRecord
 }

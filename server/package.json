@@ -14,6 +14,7 @@
     "jade": "~1.1.5",
     "lastfm": "~0.9.0",
     "less": "~1.6.2",
+    "moment": "*",
     "mongoose": "~3.8.5",
     "node-foursquare": "~0.2.0",
     "passport": "~0.2.0",
@@ -29,6 +30,7 @@
     "twit": "~1.1.12",
     "underscore": "~1.5.2",
     "paypal-rest-sdk": "~0.6.4",
+    "q": "*",
     "connect-mongo": "~0.4.0"
   }
 }
