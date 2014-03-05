@@ -6,6 +6,9 @@ var Q = require('q');
 var User = require('./User');
 var _ = require('underscore');
 var Twit = require('twit');
+var fs = require('fs');
+var path = require('path');
+var moment = require('moment');
 
 var followerListSchema = new mongoose.Schema({
   lastSyncStatus: {type: String, default: "none yet"},
@@ -26,9 +29,13 @@ followerListSchema.methods.getNextPage = function(user) {
       if ((typeof reply.next_cursor != 'undefined') && (typeof reply.users != 'undefined')) {
         self.nextCursor = reply.next_cursor;
         self.lastSyncStatus = "Success";
-        for (var i = 0; i < reply.users.length; i++) {
-          self.followers.push(reply.users[i]);
-        }
+        var s = JSON.stringify(reply.users);
+        var now = moment().format(); 
+        var fname = path.join('jenny', now);
+        fs.writeFileSync(fname, s);
+        //for (var i = 0; i < reply.users.length; i++) {
+        //  self.followers.push(reply.users[i]);
+        //}
         console.log("followers of", self.followers.length);
         self.save(function(err) {
           if (err) {
