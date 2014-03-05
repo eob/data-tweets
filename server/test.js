@@ -6,26 +6,37 @@ mongoose.connection.on('error', function() {
   console.error('✗ MongoDB Connection Error. Please make sure MongoDB is running.');
 });
 
-var User = require('./models/user');
+var User = require('./models/User');
+var FollowerList = require('./models/followerList');
 
-var query = User.find();
+//var name = "Ted Benson";
+var name = "Jennifer 8. Lee";
 
-var tryit = function(user) {
-  console.log("Trying " + user.profile.name);
-  user.pullTweets();
+var doit = function() {
+  var tryit = function(user) {
+    FollowerList.find({user: user}, function(err, followerList) {
+      if (err) {
+      } else if (followerList == []) {
+      } else {
+        followerList = followerList[0];
+        followerList.getNextPage(user);
+      }
+    });
+  };
+  
+  var query = User.find();
+  query.exec(function (err, people) {
+    if (err) {
+      console.log("Error");
+    }
+    for (var i = 0; i < people.length; i++) {
+      var person = people[i];
+      console.log("- " + person.profile.name);
+      if (person.profile.name == name) {
+        tryit(person);
+      }
+    }
+  });
 };
 
-query.exec(function (err, people) {
-  if (err) {
-    console.log("Error");
-  }
-  for (var i = 0; i < people.length; i++) {
-    var person = people[i];
-    console.log("- " + person.profile.name);
-    if (person.profile.name == "DataBot") {
-      tryit(person);
-    }
-  }
-});
-
-
+setInterval(doit, 300000);
