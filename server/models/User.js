@@ -85,6 +85,23 @@ userSchema.methods.directMessages = function(cb) {
   });
 };
 
+userSchema.methods.followers = function(page, cb) {
+  var token = _.findWhere(this.tokens, { kind: 'twitter' });
+  var T = new Twit({
+    consumer_key: secrets.twitter.consumerKey,
+    consumer_secret: secrets.twitter.consumerSecret,
+    access_token: token.accessToken,
+    access_token_secret: token.tokenSecret
+  });
+  T.get('followers/list',
+        {cursor: page,
+         count: 200,
+         skip_status: 1,
+         include_user_entities: true}, cb);
+};
+
+
+
 userSchema.methods.pullTweets = function() {
   var self = this;
   if (this.syncStatus != "Syncing") {

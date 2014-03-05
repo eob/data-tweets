@@ -15,11 +15,14 @@
           a(href='/experiments') My Experiments
         li(class=title=='Sync'?'active':undefined)
           a(href='/sync') Sync
+        li(class=title=='Jenny'?'active':undefined)
+          a(href='/jenny') Jenny
+
       ul.nav.navbar-nav.navbar-right
         if !user
-          li(class=title=='Login'?'active':undefined)
+          li(style="display:none;", class=title=='Login'?'active':undefined)
             a(href='/login') Login
-          li(class=title=='Create Account'?'active':undefined)
+          li(style="display:none;", class=title=='Create Account'?'active':undefined)
             a(href='/signup') Create Account
         else
           li.dropdown(class=title=='Account Management'?'active':undefined)

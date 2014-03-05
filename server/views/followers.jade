@@ -1,0 +1,45 @@
+extends layout
+
+block content
+  .page-header
+    h3 Followers on Twitter (Refresh this page to Update)
+
+  div.row
+    div.col-sm-2
+      div=name
+    div.col-sm-3
+      table.table.table-condensed
+        tr
+          th Time
+          td=lastSyncTime
+        tr
+          th Result
+          td=lastSyncStatus
+        tr
+          th Count
+          td=thecount
+
+    div.col-sm-3
+      if offerSync
+        form(method='post', action='/jenny', style='margin-top: 15px;')
+          input(type="hidden", name="_csrf", value=token)
+          button(type='submit' class='btn btn-success') Sync with Twitter Now
+
+  div.row
+    div.col-sm-12
+      table.table.table-striped
+        tbody
+          tr
+            th Followers
+            th Verified
+            th Handle
+            th Name
+            th Description
+          each follower in followers
+            tr
+              td=follower.followers_count
+              td=follower.verified
+              td=follower.screen_name
+              td=follower.name
+              td=follower.description
+  

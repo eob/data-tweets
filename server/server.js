@@ -18,6 +18,7 @@ var homeController = require('./controllers/home');
 var syncController = require('./controllers/sync');
 var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
+var followersController = require('./controllers/followers');
 var experimentsController = require('./controllers/experiments');
 
 /**
@@ -111,6 +112,9 @@ app.get('/experiment/:experiment', passportConf.isAuthenticated, experimentsCont
 app.get('/sync', passportConf.isAuthenticated, syncController.getIndex);
 app.post('/sync', passportConf.isAuthenticated, syncController.postIndex);
 
+app.get('/jenny', passportConf.isAuthenticated, followersController.getIndex);
+app.post('/jenny', passportConf.isAuthenticated, followersController.postIndex);
+
 app.get('/account', passportConf.isAuthenticated, userController.getAccount);
 app.post('/account/profile', passportConf.isAuthenticated, userController.postUpdateProfile);
 app.post('/account/password', passportConf.isAuthenticated, userController.postUpdatePassword);
@@ -159,3 +163,7 @@ app.get('/auth/tumblr/callback', passport.authorize('tumblr', { failureRedirect:
 app.listen(app.get('port'), function() {
   console.log("✔ Express server listening on port %d in %s mode", app.get('port'), app.settings.env);
 });
+
+function getf() {
+  var uname = 'jenny8lee';
+}
